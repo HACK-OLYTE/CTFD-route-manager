@@ -9,6 +9,9 @@ A CTFd plugin to manage HTTP redirects directly from the admin panel — no code
 - Delete redirects at any time
 - Admin and plugin routes are always protected from being redirected
 
+<img width="1332" height="868" alt="route" src="https://github.com/user-attachments/assets/36b57c07-5b1f-4017-bdd2-7dc2c2f51708" />
+
+
 ## Installation
 
 Copy the `ctfd-route-manager` folder into your CTFd `plugins/` directory:
