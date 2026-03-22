@@ -1,0 +1,7 @@
+{
+  "name": "Route Manager",
+  "route": "/plugins/route-manager/",
+  "description": "Manage route redirections from the admin panel. Add, delete and configure 301/302 redirects without editing code.",
+  "version": "1.0.0",
+  "author": "Hack'olyte"
+}

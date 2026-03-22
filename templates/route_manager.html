@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+  <div class="container">
+    <h1>Route Manager</h1>
+  </div>
+</div>
+
+<div class="container">
+
+  {# Current redirects #}
+  <div class="row mb-5">
+    <div class="col-md-10 offset-md-1">
+      <h4 class="mb-3">
+        Configured redirects
+        <span class="badge badge-secondary ml-1">{{ redirects | length }}</span>
+      </h4>
+
+      {% if redirects %}
+      <table class="table table-sm table-bordered table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th>Source</th>
+            <th>Destination</th>
+            <th>Code</th>
+            <th class="text-center" style="width:110px;">Status</th>
+            <th class="text-center" style="width:60px;">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for source, entry in redirects.items() %}
+          <tr class="{% if not entry[2] %}table-secondary text-muted{% endif %}">
+            <td><code>{{ source | e }}</code></td>
+            <td><code>{{ entry[0] | e }}</code></td>
+            <td>
+              <span class="badge badge-{% if entry[1] == 301 %}warning{% else %}info{% endif %}">
+                {{ entry[1] }}
+              </span>
+            </td>
+            <td class="text-center">
+              <form method="POST" action="/plugins/route-manager/toggle">
+                <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                <input type="hidden" name="source" value="{{ source | e }}">
+                <button type="submit"
+                        class="btn btn-sm {% if entry[2] %}btn-success{% else %}btn-outline-secondary{% endif %}"
+                        title="{% if entry[2] %}Disable{% else %}Enable{% endif %}">
+                  {% if entry[2] %}
+                    <i class="fas fa-toggle-on"></i> Active
+                  {% else %}
+                    <i class="fas fa-toggle-off"></i> Inactive
+                  {% endif %}
+                </button>
+              </form>
+            </td>
+            <td class="text-center">
+              <form method="POST" action="/plugins/route-manager/delete">
+                <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                <input type="hidden" name="source" value="{{ source | e }}">
+                <button type="submit" class="btn btn-sm btn-danger">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted">No redirects configured.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# Add redirect #}
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <h4 class="mb-3">Add a redirect</h4>
+      <form method="POST" action="/plugins/route-manager/add">
+        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+        <div class="form-row align-items-end">
+          <div class="col-md-4 mb-2">
+            <label class="small font-weight-bold">Source path</label>
+            <input type="text" name="source" class="form-control form-control-sm"
+                   placeholder="/old-path" maxlength="255" required>
+          </div>
+          <div class="col-md-4 mb-2">
+            <label class="small font-weight-bold">Destination path</label>
+            <input type="text" name="destination" class="form-control form-control-sm"
+                   placeholder="/new-path" maxlength="255" required>
+          </div>
+          <div class="col-md-2 mb-2">
+            <label class="small font-weight-bold">HTTP code</label>
+            <select name="code" class="form-control form-control-sm">
+              <option value="302" selected>302 — Temporary</option>
+              <option value="301">301 — Permanent</option>
+            </select>
+          </div>
+          <div class="col-md-2 mb-2">
+            <button type="submit" class="btn btn-sm btn-primary btn-block">
+              <i class="fas fa-plus mr-1"></i>Add
+            </button>
+          </div>
+        </div>
+        <p class="text-muted small mt-1">
+          Both source and destination must be relative paths starting with <code>/</code>.
+        </p>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
